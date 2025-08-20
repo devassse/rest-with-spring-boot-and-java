@@ -1,55 +1,62 @@
 package mz.co.keomasoftware.services;
 
+import mz.co.keomasoftware.data.dto.PeopleDTO;
+import mz.co.keomasoftware.exceptions.ResourceNotFoundException;
+import mz.co.keomasoftware.mapper.ObjectMapper;
 import mz.co.keomasoftware.model.People;
+import mz.co.keomasoftware.repositories.PeopleRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Logger;
 
 @Service
 public class PeopleService {
 
     private final AtomicLong counter = new AtomicLong();
-    private Logger logger = Logger.getLogger(PeopleService.class.getName());
+    private Logger logger = LoggerFactory.getLogger(PeopleService.class.getName());
 
-    public List<People> findAll(){
+    @Autowired
+    private PeopleRepository repository;
 
-        ArrayList<People> people = new ArrayList<>();
-        for (var i = 0; i < 8; i++) {
-            People person = mockPeople(i);
-
-            System.out.println("Person " + i + " " + person);
-
-            people.add(person);
-        }
-
-        return people;
+    public List<PeopleDTO> findAll(){
+        logger.info("Find All People");
+        return ObjectMapper.parseListObjects(repository.findAll(), PeopleDTO.class);
     }
 
-    public People findById(String id) {
+    public PeopleDTO findById(Long id) {
         logger.info("Finding one Person");
-
-        People person = new People();
-        person.setId(counter.incrementAndGet());
-        person.setFirstName("Joao Devson");
-        person.setLasstName("Mucavel");
-        person.setAddress("Matola Gare, Q&");
-        person.setGender("Male");
-
-        return person;
+        var entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No Records Found for this ID"));
+        return ObjectMapper.parseObject(entity, PeopleDTO.class);
     }
 
-    private People mockPeople(int i){
-        People person = new People();
+    public PeopleDTO createOne(PeopleDTO person){
+        logger.info("Creating a Person");
 
-        person.setId(counter.incrementAndGet());
-        person.setFirstName("Firstname " + i);
-        person.setLasstName("Lastname" + i);
-        person.setAddress("Matola Gare, Q&" + i);
-        person.setGender("Male");
+        var entity = ObjectMapper.parseObject(person, People.class);
 
-        return person;
+        return ObjectMapper.parseObject(repository.save(entity), PeopleDTO.class);
+    }
+
+    public PeopleDTO update(PeopleDTO person){
+        logger.info("Updating a Person");
+
+        People entity = repository.findById(person.getId()).orElseThrow(() -> new ResourceNotFoundException("No Records Found for this ID"));
+
+        entity.setFirstName(person.getFirstName());
+        entity.setLastName(person.getLastName());
+        entity.setAddress(person.getAddress());
+        entity.setGender(person.getGender());
+
+        return ObjectMapper.parseObject(repository.save(entity), PeopleDTO.class);
+    }
+
+    public void removeById(Long id){
+        logger.info("Deleting a Person");
+        People entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No Records Found for this ID"));
+        repository.delete(entity);
     }
 }

@@ -1,6 +1,6 @@
 package mz.co.keomasoftware.utilities;
 
-import mz.co.keomasoftware.exceptions.UnsupportedMathOperationException;
+import mz.co.keomasoftware.exceptions.ResourceNotFoundException;
 
 public class NumbersConverter {
 
@@ -15,7 +15,7 @@ public class NumbersConverter {
 
     public static Double convertToDouble(String strNumber) throws IllegalArgumentException{
         if(strNumber == null || strNumber.isEmpty())
-            throw new UnsupportedMathOperationException("Please enter a Valide NUMBER");
+            throw new ResourceNotFoundException("Please enter a Valide NUMBER");
         String number = strNumber.replace(",", ".");
         return Double.parseDouble(number);
     }

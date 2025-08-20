@@ -1,33 +1,19 @@
-package mz.co.keomasoftware.model;
-
-import jakarta.persistence.*;
+package mz.co.keomasoftware.data.dto;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-@Entity
-@Table(name = "person")
-public class People implements Serializable {
+public class PeopleDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "first_name", nullable = false, length = 80)
     private String firstName;
-
-    @Column(name = "last_name", nullable = false, length = 80)
     private String lastName;
-
-    @Column(nullable = false, length = 100)
     private String address;
-
-    @Column(nullable = false, length = 6)
     private String gender;
 
-    public People() {
+    public PeopleDTO() {
     }
 
     public Long getId() {
@@ -50,7 +36,7 @@ public class People implements Serializable {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public  void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
@@ -75,7 +61,7 @@ public class People implements Serializable {
         return "People{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
-                ", lasstName='" + lastName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", address='" + address + '\'' +
                 ", gender='" + gender + '\'' +
                 '}';
@@ -83,7 +69,7 @@ public class People implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof People people)) return false;
+        if (!(o instanceof PeopleDTO people)) return false;
         return Objects.equals(getId(), people.getId()) && Objects.equals(getFirstName(), people.getFirstName()) && Objects.equals(getLastName(), people.getLastName()) && Objects.equals(getAddress(), people.getAddress()) && Objects.equals(getGender(), people.getGender());
     }
 

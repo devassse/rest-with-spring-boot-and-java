@@ -1,15 +1,11 @@
 package mz.co.keomasoftware.controllers;
 
-import mz.co.keomasoftware.model.People;
+import mz.co.keomasoftware.data.dto.PeopleDTO;
 import mz.co.keomasoftware.services.PeopleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,20 +19,38 @@ public class PeopleController {
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public People fingById(@PathVariable("id") String id){
+    public PeopleDTO fingById(@PathVariable("id") Long id){
         return service.findById(id);
     }
 
-    @RequestMapping(
+    @RequestMapping(value = "/findAll",
         method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public List<People> findAll(){
-        List<People> people = service.findAll();
+    public List<PeopleDTO> findAll(){
+        return service.findAll();
+    }
 
-        System.out.println("People " + people);
+    @RequestMapping(
+    method = RequestMethod.POST,
+    consumes = MediaType.APPLICATION_JSON_VALUE,
+    produces = MediaType.APPLICATION_JSON_VALUE)
+    public PeopleDTO create(@RequestBody PeopleDTO person){
+        return service.createOne(person);
+    }
 
-        return people;
+    @RequestMapping(
+            method = RequestMethod.PUT,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public PeopleDTO update(@RequestBody PeopleDTO person){
+        return service.update(person);
+    }
+
+    @RequestMapping(
+            method = RequestMethod.DELETE)
+    public void remove(@PathVariable Long id){
+        service.removeById(id);
     }
 
 }
